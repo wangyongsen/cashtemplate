@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender class="org.apache.log4j.ConsoleAppender" name="console">
+	<param name="Threshold" value="INFO" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%t] %-17c{2} (%13F:%L) 
+				%3x - %m%n" />
+		</layout>
+	</appender>
+	<!--INFO级别日志配置 -->
+	<appender class="org.apache.log4j.DailyRollingFileAppender" name="cash-info" >
+		<param name="File" value="/Users/peizilong/Documents/yinghuo/cash-info.log" />
+		<param name="Threshold" value="INFO" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="=%d %-5p [%t] %-17c{2} (%13F:%L) %3x - %m%n" />
+		</layout>
+	</appender>
+	<!-- DEBUG级别日志配置 -->
+	<appender class="org.apache.log4j.DailyRollingFileAppender" name="cash-debug"  >
+		<param name="File" value="/Users/peizilong/Documents/yinghuo/cash-debug.log" />
+		<param name="Threshold" value="DEBUG" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="=%d %-5p [%t] %-17c{2} (%13F:%L) %3x - %m%n" />
+		</layout>
+	</appender>
+	<!-- ERROR级别日志配置 -->
+	<appender class="org.apache.log4j.DailyRollingFileAppender" name="cash-error" >
+		<param name="File" value="/Users/peizilong/Documents/yinghuo/cash-error.log" />
+		<param name="Threshold" value="ERROR" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="=%d %-5p [%t] %-17c{2} (%13F:%L) %3x - %m%n" />
+		</layout>
+	</appender>
+	<!-- 特定类日志配置 -->
+	<appender class="org.apache.log4j.DailyRollingFileAppender" name="demoController" >
+		<param name="File" value="/Users/peizilong/Documents/yinghuo/demoController.log" />
+		<param name="Threshold" value="info" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="=%d %-5p [%t] %-17c{2} (%13F:%L) %3x - %m%n" />
+		</layout>
+	</appender>
+	<!-- 打印特定类的日志 -->
+	<logger name="com.yinghuo.control.DemoController"
+		additivity="true">
+		<level value="info" />
+		<appender-ref ref="demoController" />
+	</logger>
+	<root>
+	    <!-- 配置INFO,ERRO,DEBUG日志输出，注意日志级别(由高到低):error>info>debug -->
+		<appender-ref ref="console" />
+		<appender-ref ref="cash-info" />
+		<appender-ref ref="cash-debug" />
+		<appender-ref ref="cash-error" />
+	</root>
+</log4j:configuration>

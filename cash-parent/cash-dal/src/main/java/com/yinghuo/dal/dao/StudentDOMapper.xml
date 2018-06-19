@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yinghuo.dal.dao.StudentDOMapper">
+    <!-- 自动生成,请修�? STUDENT.xml -->
+    <resultMap id="BaseResultMap"  type="com.yinghuo.dal.entity.StudentDO">
+        <id column="ID" property="id" jdbcType="BIGINT" javaType="Long"/>
+        <result column="AGE" property="age" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR" javaType="String"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID,AGE,NAME
+    </sql>
+
+
+    <!--自定义SQL-->
+    <select id="queryByFullMinusNo" resultMap="BaseResultMap">
+            SELECT /*MS-STUDENT-QUERYBYFULLMINUSNO*/  <include refid="Base_Column_List" />
+        FROM STUDENT
+        WHERE
+            ID = #{id}
+    </select>
+
+    <!--插入�?:STUDENT-->
+    <insert id="insert" >
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO STUDENT(
+            ID
+            ,AGE
+            ,NAME
+        )VALUES(
+             #{id}
+            , #{age}
+            , #{name}
+        )
+    </insert>
+
+    <!--更新�?:STUDENT-->
+    <update id="update" >
+        UPDATE /*MS-STUDENT-UPDATE*/ STUDENT
+        SET
+            AGE             = #{age}
+            ,NAME            = #{name}
+        WHERE
+            ID              = #{id}
+    </update>
+
+    <!--根据主键删除数据:STUDENT-->
+    <delete id="deleteByPrimary" >
+        DELETE /*MS-STUDENT-DELETEBYPRIMARY*/ FROM
+            STUDENT
+        WHERE
+            ID = #{id}
+    </delete>
+
+    <!--根据主键获取数据:STUDENT-->
+    <select id="getByPrimary" resultMap="BaseResultMap">
+        SELECT /*MS-STUDENT-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM STUDENT
+        WHERE
+            ID = #{id}
+    </select>
+</mapper>

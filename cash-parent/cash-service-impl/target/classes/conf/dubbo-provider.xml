@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	<dubbo:application name="yinghuo-provider" owner="yinghuo"
+		organization="dubbox" />
+
+	<dubbo:registry address="${dubbox.zookeeper.addr}" />
+
+	<dubbo:protocol name="dubbo" serialization="${dubbox.serialization}" />
+	<dubbo:protocol name="rest" port="${dubbox.rest.port}" threads="500"
+		contextpath="" server="tomcat" accepts="500" />
+	<!-- 注解式 -->
+	<dubbo:annotation package="com.yinghuo.service.impl" />
+	<!-- 编程式（二选一） -->
+<!-- 	<dubbo:service interface="com.yinghuo.service.facade.IUserService" ref="userService"  protocol="rest" validation="false"/>
+		<bean id="userService" class=" com.yinghuo.service.impl.UserService"/> -->
+</beans>

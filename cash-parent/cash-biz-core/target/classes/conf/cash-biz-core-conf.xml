@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	<context:component-scan base-package="com.yinghuo.core.service" />
+<!-- 	<context:component-scan base-package="com.yinghuo.core.service">
+    <context:include-filter type="annotation" expression="com.yinghuo.core.service.ProfilerY" />
+    </context:component-scan>
+    <aop:aspectj-autoproxy proxy-target-class="true"/> -->
+	<!-- 配置切入点调用日志 -->
+	<bean id="serviceDigestInteceptor"
+		class="com.yinghuo.core.common.log.inteceptor.ServiceDigestInteceptor"></bean>
+		
+	<!-- 方法性能监控处理器 -->
+	<bean id="performanceMonitorInterceptor"
+		class="com.yinghuo.core.common.log.inteceptor.PerformanceMonitorInterceptor"></bean>
+		
+   	<!-- 方法性能监控处理器 -->
+	<bean id="dalMonitorInterceptor"
+		class="com.yinghuo.core.common.log.inteceptor.DALServiceDigestInteceptor"></bean>
+			
+	<!-- 	<aop:config>
+		<aop:pointcut id="serviceSharePoint"
+			expression="execution(public * com.yinghuo.*.*.*.*(..))" />
+		
+		<aop:advisor advice-ref="performanceMonitorInterceptor"
+			pointcut-ref="serviceSharePoint" />
+		</aop:config> 
+		
+		<aop:advisor advice-ref="serviceDigestInteceptor"
+			pointcut-ref="serviceSharePoint" />
+		</aop:config> 
+		
+	-->
+	<!--日志和性能拦截器（均通过注解拦截）  -->
+    <bean id="serviceProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">  
+        <property name="interceptorNames">  
+            <list>  
+                <value>serviceDigestInteceptor</value>
+                <value>performanceMonitorInterceptor</value>
+            </list>  
+        </property>  
+        <property name="beanNames">  
+            <value>*Service</value>  
+        </property>  
+    </bean>  
+	<!-- -数据库性能拦截器(无需注解自动拦截) -->
+	<bean id="dalProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">  
+        <property name="interceptorNames">  
+            <list>  
+                <value>dalMonitorInterceptor</value>
+            </list>  
+        </property>  
+        <property name="beanNames">  
+            <value>*Mapper</value>  
+        </property>  
+    </bean>  
+    
+</beans>

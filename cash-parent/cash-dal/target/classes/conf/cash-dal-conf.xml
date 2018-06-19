@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	<context:component-scan base-package="com.yinghuo.dal" />
+	<!-- <aop:aspectj-autoproxy proxy-target-class="false"/> -->
+ <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" 
+  init-method="init" destroy-method="close"> 
+  <property name="driverClassName" value="${jdbc.driverClassName}" /> 
+  <property name="url" value="${jdbc.url}" /> 
+  <property name="username" value="${jdbc.username}" /> 
+  <property name="password" value="${jdbc.password}" /> 
+  <!-- 配置初始化大小、最小、最大 --> 
+  <property name="initialSize" value="${jdbc.initialSize}" /> 
+  <property name="minIdle" value="${jdbc.minIdle}" /> 
+  <property name="maxActive" value="${jdbc.maxActive}" />
+
+  <!-- 配置获取连接等待超时的时间 --> 
+  <property name="maxWait" value="${jdbc.maxWait}" />
+
+  <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 --> 
+  <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+
+  <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 --> 
+  <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+
+  <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+
+  <!-- 这里建议配置为TRUE，防止取到的连接不可用 --> 
+  <property name="testOnBorrow" value="${jdbc.testOnBorrow}" /> 
+  <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+
+  <!-- 打开PSCache，并且指定每个连接上PSCache的大小 --> 
+  <property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}" /> 
+  <property name="maxPoolPreparedStatementPerConnectionSize" 
+   value="${jdbc.maxPoolPreparedStatementPerConnectionSize}" />
+
+  <!-- 这里配置提交方式，默认就是TRUE，可以不用配置 -->
+
+  <property name="defaultAutoCommit" value="${jdbc.defaultAutoCommit}" />
+
+  <!-- 验证连接有效与否的SQL，不同的数据配置不同 --> 
+  <property name="validationQuery" value="${jdbc.validationQuery}" /> 
+  <property name="filters" value="stat" /> 
+  <property name="proxyFilters"> 
+   <list> 
+    <ref bean="logFilter" /> 
+   </list> 
+  </property> 
+ </bean>
+ <bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter"> 
+  <property name="statementExecutableSqlLogEnable" value="false" /> 
+ </bean>
+ 
+	<!-- mybatis基础配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:conf/mybatis.xml" />
+		<property name="mapperLocations">
+		 <value>classpath:conf/sqlmap/*.xml</value>
+		 </property> 
+		<!-- spring mybaties结合方式1 
+		<property name="mapperLocations">
+		 <array> <value>classpath:AdminMapper.xml</value></array> 
+		 </property> -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 配置sqlSessionTemplate spring mybaties结合方式1 接口实现类需继承SqlSessionDaoSupport并@Resource 
+		setSqlSessionTemplate 获取getSqlSession().selectOne-->
+	<!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate"> 
+		<constructor-arg index="0" ref="sqlSessionFactory" /> </bean> -->
+	<!-- mybatis操作接口扫描 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.yinghuo.dal.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 事务模板 &&编程式事务-->
+	<bean id="transactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
+	<!-- 本地新事务模板: 该事务模板中的处理将在新事务中运行 -->
+	<bean id="localNewTransTransactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW" />
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+	</bean>
+	
+	<bean id="serviceTemplate" class="com.yinghuo.core.common.service.template.impl.ServiceTemplateImpl">
+	<property name="transactionTemplate" ref="localNewTransTransactionTemplate"></property>
+    </bean>
+	<!-- 开启注解事务机制 配置基于注解方式的事务 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+
+	<!--Spring 声明式配置 -->
+<!-- 	<tx:advice id="txAdvice" transaction-manager="transactionManager"> 
+		<tx:attributes> 
+		<tx:method name="verify*" read-only="true"/> 
+		<tx:method name="acquire*" read-only="true"/>
+		<tx:method name="get*" read-only="true"/>
+		<tx:method name="is*" read-only="true"/>
+		<tx:method name="insert*" rollback-for="Exception" propagation="REQUIRED"/> 
+		<tx:method name="register*" rollback-for="Exception" propagation="REQUIRED"/> 
+		<tx:method name="update*" rollback-for="Exception" propagation="REQUIRED"/> 
+		<tx:method name="delete*" rollback-for="Exception" propagation="REQUIRED"/>
+		</tx:attributes> 
+		</tx:advice> 
+		<aop:config> 
+		<aop:pointcut id="serviceOperation" expression="execution(* com.caocao.core.service.impl.*Impl.*(..))"/> 
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
+		</aop:config> -->
+
+</beans>

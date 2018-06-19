@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yinghuo.dal.dao.StudentDOMapper">
+    <!-- 自动生成,请修改 STUDENT.xml -->
+    <resultMap id="BaseResultMap"  type="com.yinghuo.dal.entity.StudentDO">
+        <id column="ID" property="id" jdbcType="BIGINT" javaType="Long"/>
+        <result column="AGE" property="age" jdbcType="BIGINT" javaType="Long"/>
+        <result column="CARD" property="card" jdbcType="BIGINT" javaType="Long"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR" javaType="String"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID,AGE,CARD,NAME
+    </sql>
+
+
+    <!--自定义SQL执行-->
+    <select id="queryByFullMinusNo" resultMap="BaseResultMap">
+            SELECT /*MS-STUDENT-QUERYBYFULLMINUSNO*/  <include refid="Base_Column_List" />
+        FROM STUDENT
+        WHERE
+            age = #{age}
+    </select>
+
+    <!--插入:STUDENT-->
+    <insert id="insert" >
+        INSERT INTO STUDENT(
+             AGE
+            ,NAME
+        )VALUES(
+            #{age}
+            , #{name}
+        )
+    </insert>
+
+    <!--更新STUDENT数据-->
+    <update id="update" >
+        UPDATE /*MS-STUDENT-UPDATE*/ STUDENT
+        SET
+            AGE             = #{age}
+            <if test="null!=name">
+             ,NAME            =#{name}
+            </if>
+            <if test="null!=card">
+             ,card            =#{card}
+            </if>
+            <choose>
+            
+            </choose>
+        WHERE
+            ID              = #{id}
+    </update>
+
+    <!--根据主键删除数据:STUDENT-->
+    <delete id="deleteByPrimary" >
+        DELETE /*MS-STUDENT-DELETEBYPRIMARY*/ FROM
+            STUDENT
+        WHERE
+            ID =#{id}
+    </delete>
+
+    <!--根据主键获取数据:STUDENT-->
+    <select id="getByPrimary" resultMap="BaseResultMap">
+        SELECT /*MS-STUDENT-GETBYPRIMARY*/  <include refid="Base_Column_List" />
+        FROM STUDENT
+        WHERE
+            ID = #{id}
+    </select>
+
+    <!--根据主键获取数据:STUDENT-->
+    <select id="selectByConditon" resultMap="BaseResultMap">
+        SELECT /*MS-STUDENT-SELECTBYCONDITON*/  <include refid="Base_Column_List" />
+        FROM STUDENT
+    </select>
+
+    <!--根据条件获取数据:STUDENT-->
+    <select id="getUnionTableByCondition" resultType="com.yinghuo.vo.StudentVo">
+     select /*MS-STUDENT-GETUNIONTABLEBYCONDITION*/ s.`name`,s.`age`,d.`address`,s.`card` from student s inner join student_detail d on  s.`id`=d.`student_id` where s.age=#{age,jdbcType=VARCHAR} and s.card=#{card,jdbcType=VARCHAR}  and d.`address`=#{address,jdbcType=VARCHAR}  
+    </select>
+</mapper>

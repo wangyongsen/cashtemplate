@@ -1,0 +1,60 @@
+<!DOCTYPE table SYSTEM "../config/table-config-1.0.dtd">
+<table sqlname="STUDENT" physicalName="STUDENT" remark="学生表">
+
+    <operation name="queryByFullMinusNo"  multiplicity="one" remark="自定义SQL执行" paramtype="primitive" >
+            SELECT *
+        FROM STUDENT
+        WHERE
+            age = ?
+    </operation>
+    
+    <operation name="insert" paramtype="object" remark="插入:STUDENT">
+        INSERT INTO STUDENT(
+             AGE
+            ,NAME
+        )VALUES(
+            ?
+            , ?
+        )
+    </operation>
+
+    <operation name="update" paramtype="object" remark="更新STUDENT数据">
+        UPDATE STUDENT
+        SET
+            AGE             = ?
+            <if test="null!=name">
+             ,NAME            =?
+            </if>
+            <if test="null!=card">
+             ,card            =?
+            </if>
+            <choose>
+            
+            </choose>
+        WHERE
+            ID              = ?
+    </operation>
+
+    <operation name="deleteByPrimary" multiplicity="one" remark="根据主键删除数据:STUDENT">
+        DELETE FROM
+            STUDENT
+        WHERE
+            ID =?
+    </operation>
+
+    <operation name="getByPrimary" multiplicity="one" remark="根据主键获取数据:STUDENT">
+        SELECT *
+        FROM STUDENT
+        WHERE
+            ID = ?
+    </operation>
+    
+   <operation name="selectByConditon" multiplicity="many" paramtype="primitive"  remark="根据主键获取数据:STUDENT">
+        SELECT *
+        FROM STUDENT
+    </operation>
+    
+    <operation name="getUnionTableByCondition" multiplicity="one" remark="根据条件获取数据:STUDENT" resulttype="com.yinghuo.vo.StudentVo">
+     select s.`name`,s.`age`,d.`address`,s.`card` from student s inner join student_detail d on  s.`id`=d.`student_id` where s.age=#{age,jdbcType=VARCHAR} and s.card=#{card,jdbcType=VARCHAR}  and d.`address`=#{address,jdbcType=VARCHAR}  
+    </operation>
+</table>

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.cash.supermarket</groupId>
+    <artifactId>cash-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>cash-test</artifactId>
+  <packaging>jar</packaging>
+ 
+  <properties>
+	    <maven.deploy.skip>true</maven.deploy.skip>
+	    <maven.install.skip>true</maven.install.skip>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+    </dependency>
+
+    <dependency>
+		<groupId>com.cash.supermarket</groupId>
+		<artifactId>cash-biz-core</artifactId>
+    </dependency>
+    
+    <dependency>
+		<groupId>com.cash.supermarket</groupId>
+		<artifactId>cash-dal</artifactId>
+    </dependency>
+
+  </dependencies>
+</project>
